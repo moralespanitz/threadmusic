@@ -1,0 +1,5 @@
+services:
+  api-students:
+    build: ./backend-cloud-twit
+    ports:
+      - 8000:8000
