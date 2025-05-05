@@ -8,7 +8,7 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-  .setTitle('Post API')   
+  .setTitle('Post/Song API')   
   .setDescription('API para gestionar canciones y posts')   
   .setVersion('1.0')  
   .addTag('songs')  
