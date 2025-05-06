@@ -21,5 +21,5 @@ public class Hilo {
 
     private String post; // ID del post
 
-    private int likes;
+    private int likes = 0;
 }
