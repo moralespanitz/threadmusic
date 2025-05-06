@@ -10,4 +10,3 @@ import java.util.List;
 public interface HiloRepository extends JpaRepository<Hilo, Long> {
     List<Hilo> findByPostId(Long postId);
 }
-
