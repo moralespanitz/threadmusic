@@ -11,11 +11,16 @@ import java.util.List;
 public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
 
+
     public BookmarkService(BookmarkRepository bookmarkRepository) {
         this.bookmarkRepository = bookmarkRepository;
     }
 
-    public Bookmark createBookmark(Bookmark bookmark) {
+    public List<Bookmark> getAllBookmarks() {
+        return bookmarkRepository.findAll();
+    }
+
+        public Bookmark createBookmark(Bookmark bookmark) {
         return bookmarkRepository.save(bookmark);
     }
 

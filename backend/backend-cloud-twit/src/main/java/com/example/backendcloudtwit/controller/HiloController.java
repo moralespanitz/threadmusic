@@ -27,6 +27,13 @@ public class HiloController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
+    /** GET ALL */
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Hilo>> getAllHilos() {
+        List<Hilo> lista = hiloService.getAllHilos();
+        return ResponseEntity.ok(lista);
+    }
+
     @GetMapping(
             value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -35,7 +42,8 @@ public class HiloController {
         Hilo hilo = hiloService.getHiloById(id);
         return ResponseEntity.ok(hilo);
     }
-
+    
+    @PutMapping()
     public ResponseEntity<Hilo> updateHilo(
             @PathVariable String id,
             @RequestBody Hilo hiloActualizado) {

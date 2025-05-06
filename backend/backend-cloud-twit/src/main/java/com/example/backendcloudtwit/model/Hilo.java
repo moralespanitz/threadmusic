@@ -3,6 +3,9 @@ package com.example.backendcloudtwit.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Id;
+
+
 
 @Getter
 @Setter
@@ -10,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Hilo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private String id;
 
     private String text;
 

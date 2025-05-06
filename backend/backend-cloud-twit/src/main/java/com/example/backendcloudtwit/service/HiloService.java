@@ -15,6 +15,10 @@ public class HiloService {
         this.hiloRepository = hiloRepository;
     }
 
+    public List<Hilo> getAllHilos() {
+        return hiloRepository.findAll();
+    }
+
     // CREATE
     public Hilo createHilo(Hilo hilo) {
         return hiloRepository.save(hilo);
