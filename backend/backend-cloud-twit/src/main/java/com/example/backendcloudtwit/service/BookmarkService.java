@@ -19,11 +19,11 @@ public class BookmarkService {
         return bookmarkRepository.save(bookmark);
     }
 
-    public List<Bookmark> getBookmarksByUserId(Long userId) {
-        return bookmarkRepository.findByUserId(userId);
+    public List<Bookmark> getBookmarksByUserId(String userId) {
+        return bookmarkRepository.findByUser(userId);
     }
 
-    public void deleteBookmark(Long id) {
+    public void deleteBookmark(String id) {
         bookmarkRepository.deleteById(id);
     }
 }

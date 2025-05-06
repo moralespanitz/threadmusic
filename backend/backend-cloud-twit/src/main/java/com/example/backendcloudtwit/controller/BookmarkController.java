@@ -22,12 +22,12 @@ public class BookmarkController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Bookmark>> getByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<Bookmark>> getByUser(@PathVariable String userId) {
         return ResponseEntity.ok(bookmarkService.getBookmarksByUserId(userId));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         bookmarkService.deleteBookmark(id);
         return ResponseEntity.noContent().build();
     }

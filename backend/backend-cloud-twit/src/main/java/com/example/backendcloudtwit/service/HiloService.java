@@ -5,6 +5,7 @@ import com.example.backendcloudtwit.repository.HiloRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class HiloService {
@@ -14,19 +15,34 @@ public class HiloService {
         this.hiloRepository = hiloRepository;
     }
 
+    // CREATE
     public Hilo createHilo(Hilo hilo) {
         return hiloRepository.save(hilo);
     }
 
-    public List<Hilo> getHilosByPostId(Long postId) {
-        return hiloRepository.findByPostId(postId);
+    // READ (by id)
+    public Hilo getHiloById(String id) {
+        return hiloRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Hilo no encontrado: " + id));
     }
 
-    public void deleteHilo(Long id) {
+    // UPDATE
+    public Hilo updateHilo(String id, Hilo newData) {
+        Hilo hilo = getHiloById(id);
+        hilo.setText(newData.getText());
+        hilo.setUser(newData.getUser());
+        hilo.setPost(newData.getPost());
+        hilo.setLikes(newData.getLikes());
+        return hiloRepository.save(hilo);
+    }
+
+    // DELETE
+    public void deleteHilo(String id) {
         hiloRepository.deleteById(id);
     }
 
-    public Hilo likeHilo(Long id) {
+
+    public Hilo likeHilo(String id) {
         Hilo hilo = hiloRepository.findById(id).orElseThrow();
         hilo.setLikes(hilo.getLikes() + 1);
         return hiloRepository.save(hilo);

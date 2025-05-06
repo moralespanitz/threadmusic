@@ -1,22 +1,20 @@
 package com.example.backendcloudtwit.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Getter
+@Setter
+@Document(collection = "bookmarks")
 public class Bookmark {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
-    //No se como sea con user y post acá
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private String user; // ID de usuario
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
-    // Getters y Setters
+    private String post; // ID del post
 }
 

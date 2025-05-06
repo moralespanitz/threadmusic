@@ -2,6 +2,8 @@ package com.example.backendcloudtwit.controller;
 
 import com.example.backendcloudtwit.model.Hilo;
 import com.example.backendcloudtwit.service.HiloService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,24 +18,39 @@ public class HiloController {
         this.hiloService = hiloService;
     }
 
-    @PostMapping
-    public ResponseEntity<Hilo> create(@RequestBody Hilo hilo) {
-        return ResponseEntity.ok(hiloService.createHilo(hilo));
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Hilo> createHilo(@RequestBody Hilo hilo) {
+        Hilo creado = hiloService.createHilo(hilo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<List<Hilo>> getByPost(@PathVariable Long postId) {
-        return ResponseEntity.ok(hiloService.getHilosByPostId(postId));
+    @GetMapping(
+            value = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Hilo> getHiloById(@PathVariable String id) {
+        Hilo hilo = hiloService.getHiloById(id);
+        return ResponseEntity.ok(hilo);
+    }
+
+    public ResponseEntity<Hilo> updateHilo(
+            @PathVariable String id,
+            @RequestBody Hilo hiloActualizado) {
+        Hilo updated = hiloService.updateHilo(id, hiloActualizado);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteHilo(@PathVariable String id) {
         hiloService.deleteHilo(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<Hilo> like(@PathVariable Long id) {
+    public ResponseEntity<Hilo> like(@PathVariable String id) {
         return ResponseEntity.ok(hiloService.likeHilo(id));
     }
 }

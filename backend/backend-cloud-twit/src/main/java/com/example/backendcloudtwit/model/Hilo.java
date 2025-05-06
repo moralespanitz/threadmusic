@@ -2,34 +2,21 @@ package com.example.backendcloudtwit.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "hilos")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
+@Setter
+@Document(collection = "hilos")
 public class Hilo {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
-    @Column(nullable = false)
     private String text;
 
-    // Usuario que comenta
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User usuario;
+    private String user; // ID de usuario
 
-    // Post al que pertenece el hilo
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    private String post; // ID del post
 
-    // Número de likes
-    @Column(nullable = false)
-    private Integer likes = 0;
+    private int likes;
 }
-
