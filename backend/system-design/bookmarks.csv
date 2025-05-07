@@ -1,0 +1,4 @@
+bookmark_id,user_id,entity_id,entity_type,timestamp
+301,1,101,song,2024-01-21 10:00:00
+302,2,201,post,2024-02-11 11:05:00
+303,3,103,song,2024-03-06 14:30:00
