@@ -1,5 +1,44 @@
+
 services:
-  api-students:
-    build: ./backend-cloud-twit
+  # ───── Base de datos ────────────────────────────────────────────────────
+  mongo:
+    image: mongo:7                       # última LTS
+    container_name: mongo
+    restart: unless-stopped
     ports:
-      - 8000:8000
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: historialdb
+    volumes:
+      - mongo_data:/data/db
+    networks: [backend]                
+
+  # ───── API Spring Boot ──────────────────────────────────────────────────
+  api-students:
+    build: .                             # tu Dockerfile
+    container_name: api-students
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "8002:8080"                      # host:container
+    environment:
+      SERVER_PORT: 8080                
+      SPRING_APPLICATION_NAME: backend-cloud-twit
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin123@mongo:27017/historialdb?authSource=admin
+      SPRING_DATA_MONGODB_DATABASE: historialdb
+      SPRINGDOC_API-DOCS_PATH: /api-docs
+      SPRINGDOC_SWAGGER-UI_PATH: /api
+    networks: [backend]                  # ← misma red que api‑song
+
+
+volumes:
+  mongo_data:
+
+networks:
+
+  backend:
+    external: true                       # usa la red que ya creaste con
+                                         # `docker network create backend`

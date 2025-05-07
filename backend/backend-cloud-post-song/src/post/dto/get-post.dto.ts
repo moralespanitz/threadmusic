@@ -14,10 +14,10 @@ export class GetPostDto {
   @IsNotEmpty()
   @ApiProperty({
     description: 'Song ID associated with the post',
-    type: () => Song,
-    example: 'song123',
+    type: String,
+    example: '893a7daa-db6f-4664-87b1-ed5f0f715a6b',
   })
-  songId: Song;
+  songId: string;
 
   @IsNotEmpty()
   @IsString()

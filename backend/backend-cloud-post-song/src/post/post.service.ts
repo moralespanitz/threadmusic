@@ -47,13 +47,24 @@ export class PostService {
     status: 404,
     description: 'Post not found',
   })
-  async findOne(id: string): Promise<{ post: Post; hilos: any[] }> {
-    const post = await this.postRepository.findOne({ where: { postId: id } });
+  async findOne(id: string): Promise<{ post: any; hilos: any[] }> {
+    const post = await this.postRepository.findOne({
+      where: { postId: id },
+      relations: ['songId'], // ⬅️ Incluye la relación
+    });
+  
     if (!post) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
-    const hilos = await this.spring.getAllHilos(); 
-    return { post, hilos };
+  
+    const hilos = await this.spring.getAllHilos();
+  
+    const postClean = {
+      ...post,
+      songId: post.songId?.songId ?? post.songId,
+    };
+  
+    return { post: postClean, hilos };
   }
 
   @ApiResponse({
@@ -65,15 +76,22 @@ export class PostService {
     status: 404,
     description: 'Post not found',
   })
-  async update(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
+  
+  async update(id: string, updatePostDto: UpdatePostDto): Promise<any> {
     const post = await this.postRepository.preload({ postId: id, ...updatePostDto });
-
+  
     if (!post) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
-
-    return this.postRepository.save(post);
+  
+    const saved = await this.postRepository.save(post);
+  
+    return {
+      ...saved,
+      songId: saved.songId?.songId ?? saved.songId,
+    };
   }
+  
 
   @ApiResponse({
     status: 204,
