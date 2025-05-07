@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   api-song:
     build: .
@@ -6,12 +5,13 @@ services:
     restart: unless-stopped
     ports:
       - "8001:8001"
-    volumes:
-      - .:/app
     env_file:
       - .env
     extra_hosts:
       - "host.docker.internal:host-gateway"   # disponible en Docker ≥ 20.10  :contentReference[oaicite:1]{index=1}
+    environment:
+      SPRING_URL: http://api-students:8080   # <- hostname del otro servicio
+    networks: [backend] 
 networks:
-  default:
-    name: app-network
+  backend:
+    external: true               #

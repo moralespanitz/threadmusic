@@ -5,13 +5,14 @@ import { Post } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-
+import { SpringClientService } from 'src/common/spring-client/spring-client.service';
 @ApiTags('posts') 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
+    private readonly spring: SpringClientService,
   ) { }
 
   @ApiResponse({
@@ -46,12 +47,13 @@ export class PostService {
     status: 404,
     description: 'Post not found',
   })
-  async findOne(id: string): Promise<Post> {
+  async findOne(id: string): Promise<{ post: Post; hilos: any[] }> {
     const post = await this.postRepository.findOne({ where: { postId: id } });
     if (!post) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
-    return post;
+    const hilos = await this.spring.getAllHilos(); 
+    return { post, hilos };
   }
 
   @ApiResponse({
