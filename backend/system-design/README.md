@@ -12,7 +12,7 @@
 - Database: Postgres
 - Tables: songs, posts
 
-## Business Logic Service
+## User Logic Service
 - Programming Language: Java
 - Framework: Spring
 - Database: MongoDB
