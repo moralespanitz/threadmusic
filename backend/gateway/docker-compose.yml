@@ -1,28 +1,11 @@
-version: '3.8'
 services:
   graphql-gateway:
     build: .
+    container_name: graphql-gateway
     ports:
       - "4000:4000"
-    depends_on:
-      - nest-api
-      - spring-api-hilos
-    networks:
-      - backend
-
-  nest-api:
-    image: nest-api
-    ports:
-      - "3000:3000"
-    networks:
-      - backend
-
-  spring-api-hilos:
-    image: spring-api-hilos
-    build:
-      context: ./spring-api-hilos
-    ports:
-      - "8081:8080"
+    env_file:
+      - .env
     networks:
       - backend
 
