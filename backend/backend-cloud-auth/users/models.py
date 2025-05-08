@@ -8,6 +8,3 @@ class CustomUser(AbstractUser):
     
     def __str__(self):
         return self.usuario
-
-    # TODO: Remove if is unnecessary
-    company=models.CharField(max_length=100, null=False, blank=False,editable=True)

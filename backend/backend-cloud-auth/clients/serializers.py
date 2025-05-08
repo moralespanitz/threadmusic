@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from .models import Cliente
 from users.serializer import UserSerializer
-
+from users.models import CustomUser
 class ClienteSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     
     class Meta:
         model = Cliente
-        fields = ['id', 'user', 'nombre', 'apellido']
+        fields = ['user', 'nombre', 'apellido']
     
     def create(self, validated_data):
         user_data = validated_data.pop('user')
