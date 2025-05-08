@@ -11,6 +11,14 @@ export class CreateSongDto {
   title: string;
 
   @ApiProperty({
+    description: 'The track ID of the song',
+    type: String,
+  })
+  @IsNotEmpty()
+  @IsString()
+  trackId: string;
+
+  @ApiProperty({
     description: 'The artist ID of the song',
     type: String,
   })

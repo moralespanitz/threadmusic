@@ -23,7 +23,7 @@ WORKDIR /app
 # Copiar el archivo .jar generado desde la imagen builder
 COPY --from=builder /app/target/backend-cloud-twit-0.0.1-SNAPSHOT.jar /app/backend-cloud-twit.jar
 
-# Exponer el puerto que usará Spring Boot (por defecto es 8080)
+
 EXPOSE 8002
 
 # Comando para ejecutar la aplicación

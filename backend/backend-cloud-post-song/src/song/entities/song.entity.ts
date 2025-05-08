@@ -15,6 +15,9 @@ import {
   
     @Column()
     title: string;
+
+    @Column()
+    trackId: string;
   
     @Column()
     artistId: string;

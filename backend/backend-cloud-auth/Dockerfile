@@ -4,34 +4,30 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set work directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc \
-        libmariadb-dev-compat \
-        libmariadb-dev \
-        pkg-config \
+# System deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc libmariadb-dev-compat libmariadb-dev pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
+# Poetry
 RUN pip install --upgrade pip \
     && pip install poetry
 
-# Copy only requirements to cache dependencies
 COPY pyproject.toml poetry.lock* /app/
 
-# Install dependencies
 RUN poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi --no-root
 
-# Copy project files
 COPY . /app/
 
-# Expose port
+# Colectar estáticos y migraciones
+RUN python manage.py collectstatic --noinput
+RUN python manage.py migrate
+
+# Exponer puerto
 EXPOSE 8000
 
-# Run the application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Usar gunicorn para producción
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
