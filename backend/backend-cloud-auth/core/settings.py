@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'users',
     'drf_yasg',
+    'users',
+    'clients',
+    'artists'
 ]
 
 MIDDLEWARE = [
@@ -81,12 +83,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('DATABASE_ENGINE', 'django.db.backends.mysql'),
-        'NAME': os.environ.get('DATABASE_NAME', 'your_django_database'),
-        'USER': os.environ.get('DATABASE_USER', 'your_django_user'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'your_django_password'),
-        'HOST': os.environ.get('DATABASE_HOST', 'db'),  # Use the service name 'db'
-        'PORT': os.environ.get('DATABASE_PORT', '3306'),
+        'ENGINE': os.environ.get('DATABASE_ENGINE'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT'),
     }
 }
 # Password validation
@@ -138,4 +140,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
 }
