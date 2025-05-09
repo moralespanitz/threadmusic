@@ -17,6 +17,18 @@ const postSchema = require('./graphql/schemas/post');
 const songResolvers = require('./graphql/resolvers/song');
 const postResolvers = require('./graphql/resolvers/post');
 
+// User
+const userResolvers = require('./graphql/resolvers/user');
+const userSchemas = require('./graphql/schemas/user');
+
+// Client
+const clientResolvers = require('./graphql/resolvers/client');
+const clientSchemas = require('./graphql/schemas/client');
+
+// Artist
+const artistResolvers = require('./graphql/resolvers/artist');
+const artistSchemas = require('./graphql/schemas/artist');
+
 // Merge
 const rootSchema = gql`type Query { _empty: String } type Mutation { _empty: String }`;
 const typeDefs = mergeTypeDefs([
@@ -24,14 +36,20 @@ const typeDefs = mergeTypeDefs([
   songSchema,
   postSchema,
   bookmarkSchema,
-  hiloSchema
+  hiloSchema,
+  userSchemas,
+  clientSchemas,
+  artistSchemas,
 ]);
 
 const resolvers = mergeResolvers([
   songResolvers,
   postResolvers,
   bookmarkResolvers,
-  hiloResolvers
+  hiloResolvers,
+  userResolvers,
+  clientResolvers,
+  artistResolvers
 ]);
 
 

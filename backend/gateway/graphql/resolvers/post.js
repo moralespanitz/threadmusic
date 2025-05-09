@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const BASE_URL = process.env.API_URL;
 
-// 🔧 Limpieza profunda del objeto Post para evitar ciclos
+
 function cleanPost(post) {
   const cleaned = {
     ...post,
@@ -54,7 +54,7 @@ module.exports = {
 
         const safeInput = {
           ...original,
-          ...input // lo nuevo reemplaza lo viejo
+          ...input 
         };
 
         const res = await axios.patch(`${BASE_URL}/post/${id}`, safeInput);
