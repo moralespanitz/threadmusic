@@ -69,8 +69,8 @@ const Navbar = () => {
           justifyContent: 'space-between',
           overflow: 'hidden',
           borderRight: '2px solid #1ED760',
+          borderLeft: '2px solid #1ED760',
           borderRadius: '20px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
         }}
       >
         {/* Logo */}
