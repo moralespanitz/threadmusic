@@ -16,7 +16,7 @@ import {
     @Column()
     title: string;
 
-    @Column()
+    @Column({ type: 'varchar', nullable: true })
     trackId: string;
   
     @Column()
