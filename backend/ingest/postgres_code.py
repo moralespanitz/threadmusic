@@ -6,8 +6,12 @@ import random
 import uuid
 from typing import List, Dict
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 fake = Faker()
+
 
 def generate_songs(num_songs: int) -> List[Dict]:
     """Generate fake song data."""
@@ -15,12 +19,12 @@ def generate_songs(num_songs: int) -> List[Dict]:
     songs = []
     
     for _ in range(num_songs):
-        release_date = fake.date_between(start_date='-5y', end_date='today')
+        release_date = datetime.now()
         songs.append({
             'songId': str(uuid.uuid4()),
             'title': fake.catch_phrase(),
-            'trackId': str(uuid.uuid4()),
-            'artistId': str(uuid.uuid4()),
+            'trackId': f"track_{fake.uuid4()[:8]}", # Generate trackId as string
+            'artistId': f"artist_{fake.uuid4()[:8]}", # Generate artistId as string
             'genre': random.choice(genres),
             'release_date': release_date,
             'createdAt': datetime.now(),
@@ -35,12 +39,12 @@ def generate_posts(num_posts: int, song_ids: List[str]) -> List[Dict]:
     for _ in range(num_posts):
         posts.append({
             'postId': str(uuid.uuid4()),
-            'userId': str(uuid.uuid4()),
-            'songId': random.choice(song_ids),
+            'userId': f"user_{fake.uuid4()[:8]}", # Generate userId as string
             'content': fake.text(max_nb_chars=200),
-            'release_date': fake.date_time_between(start_date='-1y', end_date='now'),
+            'release_date': datetime.now(),
             'createdAt': datetime.now(),
-            'updatedAt': datetime.now()
+            'updatedAt': datetime.now(),
+            'songId': random.choice(song_ids)
         })
     return posts
 
@@ -80,7 +84,7 @@ def ingest_data_to_postgres(songs_data: List[Dict], posts_data: List[Dict], batc
             batch = songs_data[i:i + batch_size]
             try:
                 insert_song_query = """
-                    INSERT INTO songs (song_id, title, track_id, artist_id, genre, release_date, created_at, updated_at)
+                    INSERT INTO songs ("songId", title, "trackId", "artistId", genre, release_date, "createdAt", "updatedAt")
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
                 """
                 song_data = [(
@@ -106,17 +110,17 @@ def ingest_data_to_postgres(songs_data: List[Dict], posts_data: List[Dict], batc
             batch = posts_data[i:i + batch_size]
             try:
                 insert_post_query = """
-                    INSERT INTO posts (post_id, user_id, song_id, content, release_date, created_at, updated_at)
+                    INSERT INTO posts ("postId", "userId", content, release_date, "createdAt", "updatedAt", "songIdSongId")
                     VALUES (%s, %s, %s, %s, %s, %s, %s);
                 """
                 post_data = [(
                     post['postId'],
                     post['userId'],
-                    post['songId'],
                     post['content'],
                     post['release_date'],
                     post['createdAt'],
-                    post['updatedAt']
+                    post['updatedAt'],
+                    post['songId']
                 ) for post in batch]
                 cursor.executemany(insert_post_query, post_data)
                 conn.commit()
@@ -138,12 +142,12 @@ def ingest_data_to_postgres(songs_data: List[Dict], posts_data: List[Dict], batc
             conn.close()
 
 if __name__ == "__main__":
-    # Generate 20K songs and 40K posts
+    # Generate sample data
     print("Generating fake data...")
     start_time = time.time()
     
-    songs_data = generate_songs(20000)
-    posts_data = generate_posts(40000, [song['songId'] for song in songs_data])
+    songs_data = generate_songs(10)
+    posts_data = generate_posts(10, [song['songId'] for song in songs_data])
     
     generation_time = time.time() - start_time
     print(f"Data generation completed in {generation_time:.2f} seconds")

@@ -1,4 +1,19 @@
 services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [backend]
+
   api-song:
     build: .
     container_name: api-song
@@ -11,7 +26,13 @@ services:
       - "host.docker.internal:host-gateway"   # disponible en Docker ≥ 20.10  :contentReference[oaicite:1]{index=1}
     environment:
       SPRING_URL: http://api-students:8080   # <- hostname del otro servicio
-    networks: [backend] 
+    networks: [backend]
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+
 networks:
   backend:
     external: true               #

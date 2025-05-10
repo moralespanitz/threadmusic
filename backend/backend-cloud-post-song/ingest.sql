@@ -1,13 +1,48 @@
--- PostgreSQL
+-- PostgreSQL schema
+
+-- Create songs table
+CREATE TABLE IF NOT EXISTS songs (
+    "songId" uuid PRIMARY KEY,
+    title varchar NOT NULL,
+    "trackId" varchar NOT NULL,
+    "artistId" varchar NOT NULL,
+    genre varchar,
+    release_date timestamp with time zone,
+    "createdAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create posts table
+CREATE TABLE IF NOT EXISTS posts (
+    "postId" uuid PRIMARY KEY,
+    "userId" varchar NOT NULL,
+    content varchar,
+    release_date timestamp with time zone,
+    "createdAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    "songId" uuid REFERENCES songs("songId")
+);
 
 -- Insert new songs
-INSERT INTO song (title, artist, album, duration, release_date, genre, created_at)
+INSERT INTO songs ("songId", title, "trackId", "artistId", genre, release_date, "createdAt")
 VALUES 
-  ('Summer Vibes', 'John Doe', 'Seasonal Sounds', 240, '2023-06-15', 'Electronic', NOW()),
-  ('Autumn Leaves', 'Jane Smith', 'Seasonal Sounds', 195, '2023-09-22', 'Jazz', NOW());
+  (gen_random_uuid(), 'Summer Vibes', 'track1', 'artist1', 'Electronic', NOW(), NOW()),
+  (gen_random_uuid(), 'Autumn Leaves', 'track2', 'artist2', 'Jazz', NOW(), NOW());
 
 -- Insert new posts
-INSERT INTO post (content, user_id, song_id, created_at)
-VALUES 
-  ('Check out this amazing new track!', 'user123', 1, NOW()),
-  ('My latest composition is now available', 'user456', 2, NOW());
+INSERT INTO posts ("postId", "userId", content, release_date, "songId")
+SELECT 
+    gen_random_uuid(),
+    'user123',
+    'Check out this amazing new track!',
+    NOW(),
+    "songId"
+FROM songs WHERE title = 'Summer Vibes'
+UNION ALL
+SELECT 
+    gen_random_uuid(),
+    'user456',
+    'My latest composition is now available',
+    NOW(),
+    "songId"
+FROM songs WHERE title = 'Autumn Leaves';
