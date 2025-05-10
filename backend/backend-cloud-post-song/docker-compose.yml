@@ -6,13 +6,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres_db
-      POSTGRES_HOST: localhost
-      POSTGRES_PORT: 5432
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks: [backend]
+    networks:
+      - backend
 
   api-song:
     build: .
@@ -24,13 +23,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres_db
-      POSTGRES_HOST: localhost
+      POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       PORT: 8001
       SPRING_URL: http://api-students:8080
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks: [backend]
+    networks:
+      - backend
     depends_on:
       - postgres
 
@@ -39,4 +37,4 @@ volumes:
 
 networks:
   backend:
-    external: true
+    driver: bridge
