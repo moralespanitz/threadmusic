@@ -1,14 +1,10 @@
-
 services:
   db:
     image: mysql:8.0
     container_name: mysql-auth
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: test
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-
     ports:
       - "3306:3306"
     volumes:
@@ -16,7 +12,7 @@ services:
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: ["./wait-for-it.sh", "db:3306", "--", "sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
     volumes:
       - .:/app
     ports:
@@ -29,7 +25,7 @@ services:
       DATABASE_ENGINE: django.db.backends.mysql
       DATABASE_NAME: test
       DATABASE_USER: root
-      DATABASE_PASSWORD: root
+      DATABASE_PASSWORD: password
       DATABASE_HOST: db
       DATABASE_PORT: 3306
 
