@@ -118,12 +118,5 @@ if __name__ == "__main__":
         }
     ]
 
-    # Set your PostgreSQL environment variables (replace with your actual values)
-    os.environ["POSTGRES_HOST"] = "your_host"
-    os.environ["POSTGRES_PORT"] = "5432"  # Or your port if it's not the default
-    os.environ["POSTGRES_DB"] = "your_database_name"
-    os.environ["POSTGRES_USER"] = "your_user"
-    os.environ["POSTGRES_PASSWORD"] = "your_password"
-
     # Call the function to ingest the data
     ingest_data_to_postgres(songs_data, posts_data)
