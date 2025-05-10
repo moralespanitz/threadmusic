@@ -1,30 +1,32 @@
-# Usar una imagen base de Java con OpenJDK 17 (puedes cambiar la versión si es necesario)
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
+# Use a multi-stage build to reduce the final image size
+FROM --platform=linux/amd64 maven:3.9.6-eclipse-temurin-17-alpine AS builder
 
-# Establecer el directorio de trabajo
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copiar el archivo pom.xml y descargar dependencias
+# Copy the pom.xml file to the working directory
 COPY pom.xml .
+
+# Download dependencies only.  This speeds up rebuilds if only application code changes.
 RUN mvn -B dependency:go-offline
 
-# Copiar el resto de los archivos del proyecto
+# Copy the source code to the working directory
 COPY src ./src
 
-# Construir el proyecto usando Maven
+# Package the application.  Skip tests to speed up the build.  You can remove this if you want tests to run.
 RUN mvn -B clean package -DskipTests
 
-# Usar una imagen más ligera para el runtime (sin herramientas de desarrollo)
-FROM eclipse-temurin:17-jre-alpine
+# Use a minimal JRE image for the final runtime image
+FROM --platform=linux/amd64 eclipse-temurin:17-jre-alpine
 
-# Establecer el directorio de trabajo
+# Set the working directory for the runtime image
 WORKDIR /app
 
-# Copiar el archivo .jar generado desde la imagen builder
+# Copy the packaged application JAR file from the builder stage
 COPY --from=builder /app/target/backend-cloud-twit-0.0.1-SNAPSHOT.jar /app/backend-cloud-twit.jar
 
-
+# Expose the port that the application listens on
 EXPOSE 8002
 
-# Comando para ejecutar la aplicación
+# Specify the command to run when the container starts
 ENTRYPOINT ["java", "-jar", "backend-cloud-twit.jar"]
