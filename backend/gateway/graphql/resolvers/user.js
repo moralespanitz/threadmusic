@@ -1,12 +1,14 @@
+// resolvers.js
 const axios = require('axios');
 require('dotenv').config();
-
-const BASE_URL = process.env.AUTH_API_URL; // ← asegúrate de que esto esté en tu `.env`
+const BASE_URL = process.env.AUTH_API_URL; // ej: https://mi-backend.com/auth
 
 function cleanUser(user) {
   return {
-    ...user,
-    contrasena: user.contrasena ?? null   
+    id: user.id,
+    usuario: user.username,
+    correo: user.email,
+    contrasena: user.password ?? null,
   };
 }
 
@@ -16,56 +18,91 @@ module.exports = {
       try {
         const res = await axios.get(`${BASE_URL}/users/`);
         return res.data.map(cleanUser);
-      } catch (error) {
-        console.error('[ERROR users]:', error.message);
-        throw new Error('Error al obtener los usuarios');
+      } catch (err) {
+        console.error('[ERROR users]:', err.message);
+        throw new Error('No se pudieron listar los usuarios');
       }
     },
-    user: async (_, { usuario }) => {
+
+    user: async (_, { id }) => {
       try {
-        const res = await axios.get(`${BASE_URL}/users/${usuario}/`);
+        const res = await axios.get(`${BASE_URL}/users/${id}/`);
         return cleanUser(res.data);
-      } catch (error) {
-        console.error('[ERROR user]:', error.message);
-        throw new Error('Error al obtener el usuario');
+      } catch (err) {
+        console.error('[ERROR user]:', err.message);
+        throw new Error('Usuario no encontrado');
       }
-    }
+    },
+
+    userByEmail: async (_, { correo }) => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/users/get_by_email/?email=${encodeURIComponent(correo)}`
+        );
+        return cleanUser(res.data);
+      } catch (err) {
+        console.error('[ERROR userByEmail]:', err.message);
+        throw new Error('No se encontró usuario con ese correo');
+      }
+    },
   },
+
   Mutation: {
     createUser: async (_, { input }) => {
       try {
-        const res = await axios.post(`${BASE_URL}/users/`, input);
-        return cleanUser(res.data);
-      } catch (error) {
-        console.error('[ERROR createUser]:', error.message);
-        throw new Error('Error al crear el usuario');
-      }
-    },
-    updateUser: async (_, { usuario, input }) => {
-      try {
-        const current = await axios.get(`${BASE_URL}/users/${usuario}/`);
-        const original = current.data;
-
-        const safeInput = {
-          ...original,
-          ...input
+        const payload = {
+          username: input.usuario,
+          email:    input.correo,
+          password: input.contrasena,
         };
-
-        const res = await axios.patch(`${BASE_URL}/users/${usuario}/`, safeInput);
+        const res = await axios.post(`${BASE_URL}/users/`, payload);
         return cleanUser(res.data);
-      } catch (error) {
-        console.error('[ERROR updateUser]:', error.message);
-        throw new Error('Error al actualizar el usuario');
+      } catch (err) {
+        console.error('[ERROR createUser]:', err.message);
+        throw new Error('No se pudo crear el usuario');
       }
     },
-    deleteUser: async (_, { usuario }) => {
+
+    updateUser: async (_, { id, input }) => {
       try {
-        await axios.delete(`${BASE_URL}/users/${usuario}/`);
-        return true;
-      } catch (error) {
-        console.error('[ERROR deleteUser]:', error.message);
-        throw new Error('Error al eliminar el usuario');
+        // 1) Traer estado actual
+        const current = await axios.get(`${BASE_URL}/users/${id}/`);
+        const original = current.data;
+        // 2) Mezclar solo lo que vino en input
+        const payload = {
+          ...original,
+          ...(input.correo    ? { email:    input.correo    } : {}),
+          ...(input.contrasena? { password: input.contrasena } : {}),
+        };
+        // 3) Patch
+        const res = await axios.patch(`${BASE_URL}/users/${id}/`, payload);
+        return cleanUser(res.data);
+      } catch (err) {
+        console.error('[ERROR updateUser]:', err.message);
+        throw new Error('No se pudo actualizar el usuario');
       }
-    }
-  }
+    },
+
+    deleteUser: async (_, { id }) => {
+      try {
+        await axios.delete(`${BASE_URL}/users/${id}/`);
+        return true;
+      } catch (err) {
+        console.error('[ERROR deleteUser]:', err.message);
+        throw new Error('No se pudo eliminar el usuario');
+      }
+    },
+
+    deleteUserByEmail: async (_, { correo }) => {
+      try {
+        await axios.delete(
+          `${BASE_URL}/users/delete_by_email/?email=${encodeURIComponent(correo)}`
+        );
+        return true;
+      } catch (err) {
+        console.error('[ERROR deleteUserByEmail]:', err.message);
+        throw new Error('No se pudo eliminar el usuario por correo');
+      }
+    },
+  },
 };
