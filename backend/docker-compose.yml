@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # MongoDB for backend-cloud-twit
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: historialdb
+    volumes:
+      - mongo_data:/data/db
+    networks: [backend]
+
+  # MySQL for backend-cloud-auth
+  mysql-auth:
+    image: mysql:8.0
+    container_name: mysql-auth
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: test
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks: [backend]
+
+  # backend-cloud-twit service
+  api-twit:
+    build: 
+      context: ./backend-cloud-twit
+    container_name: api-twit
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "8002:8080"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_APPLICATION_NAME: backend-cloud-twit
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin123@mongo:27017/historialdb?authSource=admin
+      SPRING_DATA_MONGODB_DATABASE: historialdb
+      SPRINGDOC_API-DOCS_PATH: /api-docs
+      SPRINGDOC_SWAGGER-UI_PATH: /api
+    networks: [backend]
+
+  # backend-cloud-post-song service
+  api-song:
+    build:
+      context: ./backend-cloud-post-song
+    container_name: api-song
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./backend-cloud-post-song/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      SPRING_URL: http://api-twit:8080
+    networks: [backend]
+
+  # backend-cloud-auth service
+  api-auth:
+    build:
+      context: ./backend-cloud-auth
+    container_name: api-auth
+    command: ["./wait-for-it.sh", "mysql-auth:3306", "--", "sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+    volumes:
+      - ./backend-cloud-auth:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend-cloud-auth/.env
+    depends_on:
+      - mysql-auth
+    environment:
+      DATABASE_ENGINE: django.db.backends.mysql
+      DATABASE_NAME: test
+      DATABASE_USER: root
+      DATABASE_PASSWORD: password
+      DATABASE_HOST: mysql-auth
+      DATABASE_PORT: 3306
+    networks: [backend]
+
+volumes:
+  mongo_data:
+  mysql_data:
+
+networks:
+  backend:
+    name: backend 
