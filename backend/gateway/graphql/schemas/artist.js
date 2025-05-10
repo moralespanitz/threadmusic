@@ -13,16 +13,13 @@ module.exports = gql`
     genero_principal: String!
   }
 
-  input CreateUserInput {
-    usuario:    String!
-    correo:     String!
-    contrasena: String!
-  }
-
+  # Ahora plano, sin anidar
   input CreateArtistaInput {
-    user:             CreateUserInput!
-    nombre_artistico: String!
-    genero_principal: String!
+    usuario:            String!
+    correo:             String!
+    contrasena:         String!
+    nombre_artistico:   String!
+    genero_principal:   String!
   }
 
   input UpdateArtistaInput {

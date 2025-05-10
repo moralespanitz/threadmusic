@@ -1,13 +1,12 @@
 const axios = require('axios');
 require('dotenv').config();
-
-const BASE_URL = process.env.AUTH_API_URL; // p.ej. http://localhost:8000/api
+const BASE_URL = process.env.AUTH_API_URL;  // p.ej. http://localhost:8000/api
 
 function cleanUser(user) {
   return {
-    id:       user.id,
-    usuario:  user.username,
-    correo:   user.email,
+    id:      user.id,
+    usuario: user.username,
+    correo:  user.email,
   };
 }
 
@@ -30,7 +29,6 @@ module.exports = {
         throw new Error('Error al obtener artistas');
       }
     },
-
     artista: async (_, { id }) => {
       try {
         const { data } = await axios.get(`${BASE_URL}/artistas/${id}/`);
@@ -40,7 +38,6 @@ module.exports = {
         throw new Error('Error al obtener artista');
       }
     },
-
     artistaByEmail: async (_, { correo }) => {
       try {
         const { data } = await axios.get(`${BASE_URL}/artistas/`, {
@@ -58,31 +55,56 @@ module.exports = {
   Mutation: {
     createArtista: async (_, { input }) => {
       try {
-        const { user: u, nombre_artistico, genero_principal } = input;
+        // Desempaquetamos el input plano
+        const {
+          usuario,
+          correo,
+          contrasena,
+          nombre_artistico,
+          genero_principal
+        } = input;
+
+        // Montamos el payload EXACTO que tu DRF espera
         const payload = {
           user: {
-            username: u.usuario,
-            email:    u.correo,
-            password: u.contrasena,
+            username: usuario,
+            email:    correo,
+            password: contrasena,
           },
           nombre_artistico,
           genero_principal,
         };
-        const { data } = await axios.post(`${BASE_URL}/artistas/`, payload);
+
+        const { data } = await axios.post(
+          `${BASE_URL}/artistas/`,
+          payload,
+          { headers: { 'Content-Type': 'application/json' } }
+        );
         return cleanArtista(data);
       } catch (err) {
-        console.error('[ERROR createArtista]:', err.response?.data || err.message);
+        console.error(
+          '[ERROR createArtista]:',
+          err.response?.status,
+          err.response?.data || err.message
+        );
         throw new Error('Error al crear artista');
       }
     },
 
     updateArtista: async (_, { id, input }) => {
       try {
-        const payload = { ...input };
-        const { data } = await axios.patch(`${BASE_URL}/artistas/${id}/`, payload);
+        const { data } = await axios.patch(
+          `${BASE_URL}/artistas/${id}/`,
+          input,
+          { headers: { 'Content-Type': 'application/json' } }
+        );
         return cleanArtista(data);
       } catch (err) {
-        console.error('[ERROR updateArtista]:', err.response?.data || err.message);
+        console.error(
+          '[ERROR updateArtista]:',
+          err.response?.status,
+          err.response?.data || err.message
+        );
         throw new Error('Error al actualizar artista');
       }
     },
@@ -106,7 +128,11 @@ module.exports = {
         await axios.delete(`${BASE_URL}/artistas/${data[0].user.id}/`);
         return true;
       } catch (err) {
-        console.error('[ERROR deleteArtistaByEmail]:', err.response?.data || err.message);
+        console.error(
+          '[ERROR deleteArtistaByEmail]:',
+          err.response?.status,
+          err.response?.data || err.message
+        );
         throw new Error('Error al eliminar artista por correo');
       }
     },
