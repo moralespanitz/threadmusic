@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import Post from '../components/Post';
 import CreatePost from '../components/CreatePost';
 
+import { useQuery } from '@apollo/client';
+import { GET_SONGS } from '../graphql/getSongs';
+
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
+
+  const { loading, error, data } = useQuery(GET_SONGS);
 
   const handleNewPost = (newPost) => {
     setPosts([newPost, ...posts]);
