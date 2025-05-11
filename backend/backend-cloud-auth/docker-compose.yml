@@ -7,7 +7,7 @@ services:
       MYSQL_DATABASE: test
       MYSQL_ROOT_HOST: '%'
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
 

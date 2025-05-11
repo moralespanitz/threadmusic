@@ -146,8 +146,8 @@ if __name__ == "__main__":
     print("Generating fake data...")
     start_time = time.time()
     
-    songs_data = generate_songs(10)
-    posts_data = generate_posts(10, [song['songId'] for song in songs_data])
+    songs_data = generate_songs(20000)
+    posts_data = generate_posts(20000, [song['songId'] for song in songs_data])
     
     generation_time = time.time() - start_time
     print(f"Data generation completed in {generation_time:.2f} seconds")
