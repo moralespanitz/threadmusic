@@ -7,8 +7,6 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    depends_on:
-      - db
     environment:
       DATABASE_ENGINE: django.db.backends.mysql
       DATABASE_NAME: test
