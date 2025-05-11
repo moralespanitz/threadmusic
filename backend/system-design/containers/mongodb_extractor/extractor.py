@@ -1,16 +1,19 @@
 from pymongo import MongoClient
 import pandas as pd
 import os
-import boto3
+# import boto3
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --- Configuración de la conexión a MongoDB ---
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://your_mongo_host:27017/")
-MONGO_DATABASE = os.environ.get("MONGO_DATABASE", "your_mongo_database")
+MONGO_URI = os.environ.get("MONGO_URI")
+MONGO_DATABASE = os.environ.get("MONGO_DATABASE")
 
-# --- Configuración de S3 ---
-S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "your-s3-bucket-name")
-S3_PREFIX = os.environ.get("S3_PREFIX", "ingesta/mongodb")
-OUTPUT_DIR = "/data/output"  # Directorio local dentro del contenedor
+# # --- Configuración de S3 ---
+# S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "your-s3-bucket-name")
+# S3_PREFIX = os.environ.get("S3_PREFIX", "ingesta/mongodb")
+OUTPUT_DIR = "./output"
 
 def extraer_y_cargar_mongodb():
     client = None
@@ -20,7 +23,7 @@ def extraer_y_cargar_mongodb():
 
         collection_names = db.list_collection_names()
 
-        s3_client = boto3.client('s3')
+        # s3_client = boto3.client('s3')
 
         for collection_name in collection_names:
             print(f"Extrayendo datos de la colección: {collection_name}")
@@ -36,15 +39,15 @@ def extraer_y_cargar_mongodb():
                 df.to_csv(output_file, index=False, encoding='utf-8')
                 print(f"Guardado localmente en: {output_file}")
 
-                # --- Cargar a S3 ---
-                s3_key = f"{S3_PREFIX}/{collection_name}.csv"
-                try:
-                    s3_client.upload_file(output_file, S3_BUCKET_NAME, s3_key)
-                    print(f"Cargado a s3://{S3_BUCKET_NAME}/{s3_key}")
-                    os.remove(output_file) # Opcional: Eliminar el archivo local
-                    print(f"Archivo local {output_file} eliminado.")
-                except Exception as e:
-                    print(f"Error al cargar {output_file} a S3: {e}")
+                # # --- Cargar a S3 ---
+                # s3_key = f"{S3_PREFIX}/{collection_name}.csv"
+                # try:
+                #     s3_client.upload_file(output_file, S3_BUCKET_NAME, s3_key)
+                #     print(f"Cargado a s3://{S3_BUCKET_NAME}/{s3_key}")
+                #     os.remove(output_file) # Opcional: Eliminar el archivo local
+                #     print(f"Archivo local {output_file} eliminado.")
+                # except Exception as e:
+                #     print(f"Error al cargar {output_file} a S3: {e}")
             else:
                 print(f"La colección {collection_name} está vacía.")
 

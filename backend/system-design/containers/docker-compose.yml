@@ -6,13 +6,12 @@ services:
       context: .
       dockerfile: mysql_extractor/Dockerfile
     environment:
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_HOST=184.72.225.36
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=test
     volumes:
       - ./data/mysql:/data/output
-
   postgresql-extractor:
     build:
       context: .
