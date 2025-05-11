@@ -1,17 +1,4 @@
 services:
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend
 
   api-song:
     build: .
@@ -23,14 +10,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres_db
-      POSTGRES_HOST: postgres
+      POSTGRES_HOST: 172.31.19.62
       POSTGRES_PORT: 5432
       PORT: 8001
       SPRING_URL: http://api-students:8080
     networks:
       - backend
-    depends_on:
-      - postgres
+
 
 volumes:
   postgres_data:
