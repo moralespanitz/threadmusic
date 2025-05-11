@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import boto3
 from dotenv import load_dotenv
+import sys  # Importa el módulo sys para manejar excepciones más específicamente
 
 load_dotenv()
 
@@ -31,7 +32,17 @@ def extraer_y_cargar_postgresql():
         cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
         tables = [table[0] for table in cursor.fetchall()]
 
-        s3_client = boto3.client('s3')
+        # Intenta crear el cliente S3 una sola vez y maneja la excepción aquí
+        try:
+            s3_client = boto3.client('s3',
+                                     aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+                                     aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+                                     aws_session_token=os.environ.get("AWS_SESSION_TOKEN")
+                                     )
+        except Exception as e:
+            print(f"Error al crear el cliente S3: {e}")
+            print("Asegúrate de haber configurado correctamente tus credenciales de AWS.")
+            sys.exit(1)  # Termina el script si no se pueden obtener las credenciales
 
         for table_name in tables:
             print(f"Extrayendo datos de la tabla: {table_name}")
@@ -54,6 +65,8 @@ def extraer_y_cargar_postgresql():
                 print(f"Archivo local {output_file} eliminado.")
             except Exception as e:
                 print(f"Error al cargar {output_file} a S3: {e}")
+                # No uses sys.exit(1) aquí, permite que el script continue con las otras tablas
+                # Considera loggear el error en un archivo o sistema de monitoreo.
 
         conn.commit()
 
