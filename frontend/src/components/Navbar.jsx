@@ -1,7 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaUser, FaBookmark, FaSearch, FaTimes } from 'react-icons/fa';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaHome, FaUser, FaBookmark, FaSearch, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const mockUsers = {
+  john_doe: {
+    id: '1',
+    username: 'john_doe',
+    name: 'John Doe',
+    avatar: 'https://i.pravatar.cc/150?img=1',
+  },
+  jane_smith: {
+    id: '2',
+    username: 'jane_smith',
+    name: 'Jane Smith',
+    avatar: 'https://i.pravatar.cc/150?img=2',
+  },
+};
 
 const Navbar = () => {
   const [isSearching, setIsSearching] = useState(false);
@@ -9,6 +24,7 @@ const Navbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const searchPanelRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -47,6 +63,14 @@ const Navbar = () => {
 
   const navItemClass = (path) =>
     `text-light d-flex align-items-center justify-content-start px-3 py-2 rounded transition w-200 ${isActive(path) ? 'bg-success text-dark fw-bold' : ''}`;
+
+  const results = Object.values(mockUsers).filter((user) =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleLogout = () => {
+    navigate('/login');
+  };
 
   return (
     <>
@@ -112,7 +136,7 @@ const Navbar = () => {
           </Link>
 
           <div
-            className={`text-light d-flex align-items-center justify-content-start px-3 py-2 w-200 rounded transition`}
+            className="text-light d-flex align-items-center justify-content-start px-3 py-2 w-200 rounded transition"
             onClick={startSearch}
             style={{ cursor: 'pointer' }}
           >
@@ -121,7 +145,24 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div style={{ height: '50px' }}></div>
+        {/* Logout Button */}
+        <div className="d-flex justify-content-center mt-3">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="btn btn-outline-danger d-flex align-items-center justify-content-center"
+            onClick={handleLogout}
+            style={{
+              width: '100%',
+              height: '40px',
+              padding: '0.5rem',
+              gap: isCollapsed || isSearching ? '0rem' : '0.5rem',
+            }}
+          >
+            <FaSignOutAlt />
+            {!isCollapsed && !isSearching && <span>Logout</span>}
+          </motion.button>
+        </div>
       </motion.div>
 
       {/* Search Panel */}
@@ -137,7 +178,7 @@ const Navbar = () => {
             style={{
               position: 'fixed',
               top: '20px',
-              left: '110px', // 80px collapsed sidebar + 20px gap
+              left: '110px',
               height: 'calc(100vh - 40px)',
               width: '320px',
               backgroundColor: '#121212',
@@ -160,13 +201,36 @@ const Navbar = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search users or songs..."
-              className="form-control"
+              className="form-control mb-3"
               style={{
                 backgroundColor: '#2a2a2a',
                 border: 'none',
                 color: 'white',
               }}
             />
+
+            <div className="text-light">
+              {searchQuery && results.length === 0 && <div>No users found.</div>}
+              {results.map((user) => (
+                <div
+                  key={user.id}
+                  className="d-flex align-items-center mb-2 p-2 rounded"
+                  style={{ cursor: 'pointer', backgroundColor: '#1e1e1e' }}
+                  onClick={() => {
+                    navigate(`/${user.username}`);
+                    stopSearch();
+                  }}
+                >
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="rounded-circle me-2"
+                    style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                  />
+                  <span>{user.name}</span>
+                </div>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

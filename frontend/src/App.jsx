@@ -27,7 +27,6 @@ function App() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Redirige al home tras autenticarse
   useEffect(() => {
     if (isAuthenticated && (location.pathname === '/login' || location.pathname === '/register')) {
       navigate('/');
@@ -83,13 +82,9 @@ function App() {
                   <Route
                     path="/"
                     element={
-                      isAuthenticated ? (
-                        <PageTransition>
-                          <Home />
-                        </PageTransition>
-                      ) : (
-                        <Navigate to="/login" />
-                      )
+                      <PageTransition>
+                        <Home />
+                      </PageTransition>
                     }
                   />
                   <Route
@@ -106,6 +101,14 @@ function App() {
                       <PageTransition>
                         <Bookmarks />
                       </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/:username"
+                    element={
+                        <PageTransition>
+                        <Profile />
+                        </PageTransition>
                     }
                   />
                   <Route path="*" element={<Navigate to="/" />} />
