@@ -55,6 +55,6 @@ const resolvers = mergeResolvers([
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-server.listen({ port: 4000 }).then(({ url }) => {
-  console.log(`🚀 GraphQL Gateway ready at ${url}`);
+server.listen({ port: 4000, host: '0.0.0.0' }).then(({ url }) => {
+  console.log("🚀 GraphQL Gateway ready at ${url}");
 });
