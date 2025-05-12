@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaUser, FaBookmark, FaSearch, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useClerk } from '@clerk/clerk-react';  // Asegúrate de importar useClerk
 
 const mockUsers = {
   john_doe: {
@@ -19,6 +20,7 @@ const mockUsers = {
 };
 
 const Navbar = () => {
+  const { signOut } = useClerk();  // Hook de Clerk para manejar la sesión
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -68,8 +70,14 @@ const Navbar = () => {
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleLogout = () => {
-    navigate('/login');
+  // Función de logout utilizando Clerk
+  const handleLogout = async () => {
+    try {
+      await signOut();  // Método de Clerk para cerrar sesión
+      navigate('/login');  // Redirigir al login después de cerrar sesión
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   return (
@@ -151,7 +159,7 @@ const Navbar = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="btn btn-outline-danger d-flex align-items-center justify-content-center"
-            onClick={handleLogout}
+            onClick={handleLogout}  // Asignamos la función de logout aquí
             style={{
               width: '100%',
               height: '40px',

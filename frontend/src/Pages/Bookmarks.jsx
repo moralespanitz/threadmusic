@@ -29,6 +29,7 @@ const bookmarkedPosts = [
 const Bookmarks = () => {
   return (
     <div style={{ color: 'white' }}>
+      <hr style={{marginTop: '80px'}}></hr>
       <h2 className="mb-4 d-flex align-items-center gap-2">
         <FaBookmark /> Your Bookmarked Posts
       </h2>

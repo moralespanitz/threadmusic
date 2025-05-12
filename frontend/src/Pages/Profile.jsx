@@ -33,6 +33,7 @@ const Profile = () => {
 
   return (
     <div className="text-light">
+      <hr style={{marginTop: '80px'}}></hr>
       {/* Header */}
       <div className="d-flex align-items-center mb-4">
         <img

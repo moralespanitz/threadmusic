@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import Post from '../components/Post';
 import CreatePost from '../components/CreatePost';
+import { useUser } from '@clerk/clerk-react';
 
 import { useQuery } from '@apollo/client';
 import { GET_SONGS } from '../graphql/getSongs';
 
 const Home = () => {
+  const { user, isLoaded } = useUser();
+
   const [posts, setPosts] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
 
@@ -30,10 +33,12 @@ const Home = () => {
     if (!bookmarks.find((b) => b.id === post.id)) {
       setBookmarks([...bookmarks, post]);
     }
-  };
+  }
 
   return (
     <div>
+      <hr style={{marginTop: '80px'}}></hr>
+      <h2>Hello {user.fullName}</h2>
       <hr></hr>
       <CreatePost onPost={handleNewPost} />
       <hr />

@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useLocation, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth, useUser, useClerk } from '@clerk/clerk-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import Login from './Pages/Login';
+import Register from './Pages/Register';
 import Home from './Pages/Home';
 import Profile from './Pages/Profile';
 import Bookmarks from './Pages/Bookmarks';
-import Login from './Pages/Login';
-import Register from './Pages/Register';
 
 import Navbar from './components/Navbar';
 import RightSidebar from './components/RightSidebar';
@@ -23,115 +24,129 @@ const PageTransition = ({ children }) => (
 );
 
 function App() {
-  const location = useLocation();
+  const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { user, isLoaded: userLoaded } = useUser();
+  const { signOut } = useClerk();
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const location = useLocation();
+  const [hasCheckedSession, setHasCheckedSession] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated && (location.pathname === '/login' || location.pathname === '/register')) {
-      navigate('/');
+    if (authLoaded && userLoaded) {
+      setHasCheckedSession(true);
     }
-  }, [isAuthenticated, navigate, location.pathname]);
+  }, [authLoaded, userLoaded]);
 
-  const isAuthRoute = ['/login', '/register'].includes(location.pathname);
+  useEffect(() => {
+    if (!authLoaded || !userLoaded || !hasCheckedSession) return;
+
+    const publicRoutes = ['/login', '/register', '/sign-in', '/sign-up', '/factor-one'];
+    const protectedRoutes = ['/home', '/profile', '/bookmarks'];
+    const currentPath = location.pathname;
+
+    if (isSignedIn) {
+      if (publicRoutes.some(route => currentPath.startsWith(route))) {
+        navigate('/home', { replace: true });
+      }
+    } else {
+      if (protectedRoutes.some(route => currentPath.startsWith(route))) {
+        navigate('/login', { replace: true });
+      }
+    }
+  }, [isSignedIn, authLoaded, userLoaded, hasCheckedSession, location, navigate]);
+
+  // Mostrar data del usuario logeado
+  useEffect(() => {
+    if (userLoaded && isSignedIn && user) {
+      console.log("Usuario logeado:", user);
+    }
+  }, [userLoaded, isSignedIn, user]);
+
+  if (!authLoaded || !userLoaded || !hasCheckedSession) {
+    return null;
+  }
 
   return (
-    <>
-      {isAuthRoute ? (
-        // Rutas públicas (login y register)
-        <div className="w-100">
-          <AnimatePresence mode="wait">
+    <div className="container-fluid">
+      <div className="row">
+        {/* Sidebar izquierdo (Navbar) */}
+        {isSignedIn && (
+          <div className="col-3 d-none d-md-block p-0">
+            <Navbar />
+          </div>
+        )}
+
+        {/* Contenido central */}
+        <div className="col-12 col-md-7 col-lg-4 px-3 mx-auto" style={{ minHeight: '100vh' }}>
+          <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<Navigate to="/login" replace />} />
               <Route
-                path="/login"
+                path="/login/*"
                 element={
-                  <PageTransition>
-                    <Login onLogin={() => setIsAuthenticated(true)} />
-                  </PageTransition>
+                  !isSignedIn ? (
+                    <PageTransition><Login /></PageTransition>
+                  ) : (
+                    <Navigate to="/home" replace />
+                  )
                 }
               />
               <Route
-                path="/register"
+                path="/register/*"
                 element={
-                  <PageTransition>
-                    <Register />
-                  </PageTransition>
+                  !isSignedIn ? (
+                    <PageTransition><Register /></PageTransition>
+                  ) : (
+                    <Navigate to="/home" replace />
+                  )
                 }
               />
-              <Route path="/" element={<Navigate to="/login" />} />
-              <Route path="*" element={<Navigate to="/login" />} />
+              <Route path="/sign-in/*" element={<Login />} />
+              <Route path="/sign-up/*" element={<Register />} />
+              <Route path="/factor-one/*" element={<Login />} />
+              <Route
+                path="/home"
+                element={
+                  isSignedIn ? (
+                    <PageTransition><Home /></PageTransition>
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  isSignedIn ? (
+                    <PageTransition><Profile /></PageTransition>
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/bookmarks"
+                element={
+                  isSignedIn ? (
+                    <PageTransition><Bookmarks /></PageTransition>
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </AnimatePresence>
         </div>
-      ) : (
-        // Rutas privadas con layout
-        <div className="d-flex w-100">
-          <Navbar />
 
-          <div className="flex-grow-1 d-flex justify-content-center position-relative" style={{ marginTop: '2rem' }}>
-            <div
-              className="content-container"
-              style={{
-                maxWidth: '650px',
-                width: '100%',
-                padding: '0 1rem',
-              }}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <Routes location={location} key={location.pathname}>
-                  <Route
-                    path="/"
-                    element={
-                      <PageTransition>
-                        <Home />
-                      </PageTransition>
-                    }
-                  />
-                  <Route
-                    path="/profile"
-                    element={
-                      <PageTransition>
-                        <Profile />
-                      </PageTransition>
-                    }
-                  />
-                  <Route
-                    path="/bookmarks"
-                    element={
-                      <PageTransition>
-                        <Bookmarks />
-                      </PageTransition>
-                    }
-                  />
-                  <Route
-                    path="/:username"
-                    element={
-                        <PageTransition>
-                        <Profile />
-                        </PageTransition>
-                    }
-                  />
-                  <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-              </AnimatePresence>
-            </div>
-
-            <div
-              className="d-none d-md-block"
-              style={{
-                position: 'absolute',
-                left: 'calc(50% + 325px)',
-                top: 0,
-                paddingTop: '2rem',
-                width: '250px',
-              }}
-            >
-              <RightSidebar />
-            </div>
+        {/* Sidebar derecho */}
+        {isSignedIn && (
+          <div className="col-lg-3 d-none d-lg-block p-0">
+            <RightSidebar />
           </div>
-        </div>
-      )}
-    </>
+        )}
+      </div>
+    </div>
   );
 }
 
