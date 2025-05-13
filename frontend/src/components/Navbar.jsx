@@ -2,25 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaUser, FaBookmark, FaSearch, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useClerk } from '@clerk/clerk-react';  // Asegúrate de importar useClerk
-
-const mockUsers = {
-  john_doe: {
-    id: '1',
-    username: 'john_doe',
-    name: 'John Doe',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-  },
-  jane_smith: {
-    id: '2',
-    username: 'jane_smith',
-    name: 'Jane Smith',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-  },
-};
+import { useClerk } from '@clerk/clerk-react';
+import mockUsers from './something';
 
 const Navbar = () => {
-  const { signOut } = useClerk();  // Hook de Clerk para manejar la sesión
+  const { signOut } = useClerk();
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -70,11 +56,10 @@ const Navbar = () => {
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Función de logout utilizando Clerk
   const handleLogout = async () => {
     try {
-      await signOut();  // Método de Clerk para cerrar sesión
-      navigate('/login');  // Redirigir al login después de cerrar sesión
+      await signOut();
+      navigate('/login');
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -159,7 +144,7 @@ const Navbar = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="btn btn-outline-danger d-flex align-items-center justify-content-center"
-            onClick={handleLogout}  // Asignamos la función de logout aquí
+            onClick={handleLogout}
             style={{
               width: '100%',
               height: '40px',
@@ -217,7 +202,14 @@ const Navbar = () => {
               }}
             />
 
-            <div className="text-light">
+            <div
+              className="text-light"
+              style={{
+                maxHeight: '80vh',
+                overflowY: 'auto',
+                paddingRight: '5px',
+              }}
+            >
               {searchQuery && results.length === 0 && <div>No users found.</div>}
               {results.map((user) => (
                 <div

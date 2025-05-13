@@ -1,0 +1,225 @@
+const mockUsers = {
+  'johndoe': {
+    id: '1',
+    username: 'johndoe',
+    name: 'John Doe',
+    avatar: 'https://i.pravatar.cc/150?img=1',
+    followers: 128,
+    following: 87,
+    posts: [
+      { id: 'p1', userId: '1', content: 'My first song!', song: 'song1.mp3', comments: [] },
+      { id: 'p2', userId: '1', content: 'Loving this track!', song: 'song2.mp3', comments: [] },
+    ],
+  },
+  'janesmith': {
+    id: '2',
+    username: 'janesmith',
+    name: 'Jane Smith',
+    avatar: 'https://i.pravatar.cc/150?img=2',
+    followers: 240,
+    following: 103,
+    posts: [
+      { id: 'p3', userId: '2', content: 'Check this out!', song: 'song3.mp3', comments: [] },
+    ],
+  },
+  'alexking': {
+    id: '3',
+    username: 'alexking',
+    name: 'Alex King',
+    avatar: 'https://i.pravatar.cc/150?img=3',
+    followers: 312,
+    following: 145,
+    posts: [
+      { id: 'p4', userId: '3', content: 'Feeling this beat!', song: 'song4.mp3', comments: [] },
+    ],
+  },
+  'sarahlee': {
+    id: '4',
+    username: 'sarahlee',
+    name: 'Sarah Lee',
+    avatar: 'https://i.pravatar.cc/150?img=4',
+    followers: 499,
+    following: 390,
+    posts: [
+      { id: 'p5', userId: '4', content: 'Chill vibes only.', song: 'song5.mp3', comments: [] },
+    ],
+  },
+  'michaelchan': {
+    id: '5',
+    username: 'michaelchan',
+    name: 'Michael Chan',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    followers: 187,
+    following: 222,
+    posts: [
+      { id: 'p6', userId: '5', content: 'New release!', song: 'song6.mp3', comments: [] },
+    ],
+  },
+  'emilywong': {
+    id: '6',
+    username: 'emilywong',
+    name: 'Emily Wong',
+    avatar: 'https://i.pravatar.cc/150?img=6',
+    followers: 231,
+    following: 188,
+    posts: [
+      { id: 'p7', userId: '6', content: 'Late night tunes.', song: 'song7.mp3', comments: [] },
+    ],
+  },
+  'bradyt': {
+    id: '7',
+    username: 'bradyt',
+    name: 'Brady Thompson',
+    avatar: 'https://i.pravatar.cc/150?img=7',
+    followers: 102,
+    following: 76,
+    posts: [
+      { id: 'p8', userId: '7', content: 'Classic drop!', song: 'song8.mp3', comments: [] },
+    ],
+  },
+  'lisamurphy': {
+    id: '8',
+    username: 'lisamurphy',
+    name: 'Lisa Murphy',
+    avatar: 'https://i.pravatar.cc/150?img=8',
+    followers: 321,
+    following: 310,
+    posts: [
+      { id: 'p9', userId: '8', content: 'Groove mode on.', song: 'song9.mp3', comments: [] },
+    ],
+  },
+  'davidhughes': {
+    id: '9',
+    username: 'davidhughes',
+    name: 'David Hughes',
+    avatar: 'https://i.pravatar.cc/150?img=9',
+    followers: 210,
+    following: 98,
+    posts: [
+      { id: 'p10', userId: '9', content: 'Throwback jam.', song: 'song10.mp3', comments: [] },
+    ],
+  },
+  'kellywright': {
+    id: '10',
+    username: 'kellywright',
+    name: 'Kelly Wright',
+    avatar: 'https://i.pravatar.cc/150?img=10',
+    followers: 390,
+    following: 340,
+    posts: [
+      { id: 'p11', userId: '10', content: 'Weekend playlist 🎧', song: 'song11.mp3', comments: [] },
+    ],
+  },
+  'jamesroberts': {
+    id: '11',
+    username: 'jamesroberts',
+    name: 'James Roberts',
+    avatar: 'https://i.pravatar.cc/150?img=11',
+    followers: 180,
+    following: 150,
+    posts: [
+      { id: 'p12', userId: '11', content: 'Let’s vibe.', song: 'song12.mp3', comments: [] },
+    ],
+  },
+  'angelalane': {
+    id: '12',
+    username: 'angelalane',
+    name: 'Angela Lane',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+    followers: 278,
+    following: 310,
+    posts: [
+      { id: 'p13', userId: '12', content: 'Jazz day 🎷', song: 'song13.mp3', comments: [] },
+    ],
+  },
+  'markgreene': {
+    id: '13',
+    username: 'markgreene',
+    name: 'Mark Greene',
+    avatar: 'https://i.pravatar.cc/150?img=13',
+    followers: 150,
+    following: 90,
+    posts: [
+      { id: 'p14', userId: '13', content: 'Energetic beats', song: 'song14.mp3', comments: [] },
+    ],
+  },
+  'chloemoore': {
+    id: '14',
+    username: 'chloemoore',
+    name: 'Chloe Moore',
+    avatar: 'https://i.pravatar.cc/150?img=14',
+    followers: 455,
+    following: 320,
+    posts: [
+      { id: 'p15', userId: '14', content: 'Let it play.', song: 'song15.mp3', comments: [] },
+    ],
+  },
+  'ryanlopez': {
+    id: '15',
+    username: 'ryanlopez',
+    name: 'Ryan Lopez',
+    avatar: 'https://i.pravatar.cc/150?img=15',
+    followers: 214,
+    following: 210,
+    posts: [
+      { id: 'p16', userId: '15', content: 'Top 5 alert!', song: 'song16.mp3', comments: [] },
+    ],
+  },
+  'zoeturner': {
+    id: '16',
+    username: 'zoeturner',
+    name: 'Zoe Turner',
+    avatar: 'https://i.pravatar.cc/150?img=16',
+    followers: 398,
+    following: 370,
+    posts: [
+      { id: 'p17', userId: '16', content: 'Funky feel 🎶', song: 'song17.mp3', comments: [] },
+    ],
+  },
+  'ethanscott': {
+    id: '17',
+    username: 'ethanscott',
+    name: 'Ethan Scott',
+    avatar: 'https://i.pravatar.cc/150?img=17',
+    followers: 330,
+    following: 288,
+    posts: [
+      { id: 'p18', userId: '17', content: 'Beat drop incoming.', song: 'song18.mp3', comments: [] },
+    ],
+  },
+  'meganreed': {
+    id: '18',
+    username: 'meganreed',
+    name: 'Megan Reed',
+    avatar: 'https://i.pravatar.cc/150?img=18',
+    followers: 342,
+    following: 400,
+    posts: [
+      { id: 'p19', userId: '18', content: 'Acoustic magic.', song: 'song19.mp3', comments: [] },
+    ],
+  },
+  'danielcook': {
+    id: '19',
+    username: 'danielcook',
+    name: 'Daniel Cook',
+    avatar: 'https://i.pravatar.cc/150?img=19',
+    followers: 190,
+    following: 120,
+    posts: [
+      { id: 'p20', userId: '19', content: 'Loop it again.', song: 'song20.mp3', comments: [] },
+    ],
+  },
+  'abbeyb': {
+    id: '20',
+    username: 'abbeyb',
+    name: 'Abbey Brown',
+    avatar: 'https://i.pravatar.cc/150?img=20',
+    followers: 490,
+    following: 415,
+    posts: [
+      { id: 'p21', userId: '20', content: 'New drop today.', song: 'song21.mp3', comments: [] },
+    ],
+  },
+};
+
+export default mockUsers;

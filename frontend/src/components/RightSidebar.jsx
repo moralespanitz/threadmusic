@@ -1,25 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserPlus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import mockUsers from './something';
 
-const recommendedUsers = [
-  {
-    id: '2',
-    name: 'Jane Smith',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-  },
-  {
-    id: '3',
-    name: 'The Synth Band',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-  },
-  {
-    id: '4',
-    name: 'DJ Galaxy',
-    avatar: 'https://i.pravatar.cc/150?img=4',
-  },
-];
+const getRandomUsers = (users, count) => {
+  const shuffled = [...users].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
 
 const RightSidebar = () => {
+  const [recommendedUsers, setRecommendedUsers] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const randomUsers = getRandomUsers(Object.values(mockUsers), 5);
+    setRecommendedUsers(randomUsers);
+  }, []);
+
   return (
     <div
       className="d-none d-lg-block"
@@ -42,6 +39,7 @@ const RightSidebar = () => {
                 cursor: 'pointer',
                 transition: 'background 0.3s ease',
               }}
+              onClick={() => navigate(`/${user.username}`)}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.background = '#343a40')
               }
@@ -61,9 +59,14 @@ const RightSidebar = () => {
                     border: '2px solid #6c757d',
                   }}
                 />
-                <span className="text-light fw-medium">{user.name}</span>
+                <span className="text-light fw-medium">{user.username}</span>
               </div>
-              <button className="btn btn-outline-light btn-sm d-flex align-items-center gap-1">
+              <button
+                className="btn btn-outline-light btn-sm d-flex align-items-center gap-1"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent redirect on button click
+                }}
+              >
                 <UserPlus size={16} />
                 Follow
               </button>

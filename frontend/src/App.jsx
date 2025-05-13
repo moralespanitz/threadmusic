@@ -134,6 +134,16 @@ function App() {
                   )
                 }
               />
+              <Route
+                path="/:username"
+                element={
+                  isSignedIn ? (
+                    <PageTransition><Profile /></PageTransition>
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </AnimatePresence>
