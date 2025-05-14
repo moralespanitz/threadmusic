@@ -6,23 +6,42 @@ services:
       context: .
       dockerfile: mysql_extractor/Dockerfile
     environment:
-      - MYSQL_HOST=184.72.225.36
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=test
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - S3_PREFIX=mysql_data
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - EXTRACTION_INTERVAL=3600
     volumes:
       - ./data/mysql:/data/output
+    restart: always
+    networks:
+      - extraction-network
+
   postgresql-extractor:
     build:
       context: .
       dockerfile: postgresql_extractor/Dockerfile
     environment:
-      - PG_HOST=${PG_HOST}
-      - PG_USER=${PG_USER}
-      - PG_PASSWORD=${PG_PASSWORD}
-      - PG_DATABASE=${PG_DATABASE}
+      - POSTGRES_HOST=${PG_HOST}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DATABASE}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - S3_PREFIX=postgresql_data
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - EXTRACTION_INTERVAL=3600
     volumes:
       - ./data/postgresql:/data/output
+    restart: always
+    networks:
+      - extraction-network
 
   mongodb-extractor:
     build:
@@ -31,5 +50,18 @@ services:
     environment:
       - MONGO_URI=${MONGO_URI}
       - MONGO_DATABASE=${MONGO_DATABASE}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - S3_PREFIX=mongodb_data
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - EXTRACTION_INTERVAL=3600
     volumes:
-      - ./data/mongodb:/data/output 
+      - ./data/mongodb:/data/output
+    restart: always
+    networks:
+      - extraction-network
+
+networks:
+  extraction-network:
+    driver: bridge 
