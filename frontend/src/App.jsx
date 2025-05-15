@@ -77,7 +77,7 @@ function App() {
         )}
 
         {/* Contenido central */}
-        <div className="col-12 col-md-7 col-lg-4 px-3 mx-auto" style={{ minHeight: '100vh' }}>
+        <div className="col-12 col-md-7 col-lg-5 px-3" style={{ minHeight: '100vh' }}>
           <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Navigate to="/login" replace />} />
@@ -150,11 +150,6 @@ function App() {
         </div>
 
         {/* Sidebar derecho */}
-        {isSignedIn && (
-          <div className="col-lg-3 d-none d-lg-block p-0">
-            <RightSidebar />
-          </div>
-        )}
       </div>
     </div>
   );

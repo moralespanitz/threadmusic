@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import mockUsers from './something';
+import {mockSongs, mockUsers} from './something';
 
 const getRandomUsers = (users, count) => {
   const shuffled = [...users].sort(() => 0.5 - Math.random());

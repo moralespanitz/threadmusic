@@ -1,16 +1,42 @@
 import React, { useState } from 'react';
+import { useQuery, gql } from '@apollo/client';
+// import { mockSongs, mockUsers } from './something';
+
+const GET_SONGS_AND_ARTISTS = gql`
+  query GetSongsAndArtists {
+    songs {
+      songId
+      title
+      artistId
+      genre
+      release_date
+      createdAt
+      updatedAt
+    }
+    artistas {
+      user { id }
+      nombre_artistico
+    }
+  }
+`;
 
 const CreatePost = ({ onPost }) => {
   const [caption, setCaption] = useState('');
   const [search, setSearch] = useState('');
   const [selectedSong, setSelectedSong] = useState(null);
 
-  const songList = [
-    { title: "Blinding Lights", artist: "The Weeknd", audioUrl: "/songs/blinding.mp3" },
-    { title: "Levitating", artist: "Dua Lipa", audioUrl: "/songs/levitating.mp3" },
-  ];
+  const { loading, error, data } = useQuery(GET_SONGS_AND_ARTISTS);
 
-  const filteredSongs = songList.filter((song) =>
+  // Si los datos de los artistas están disponibles, los usamos
+  const songsWithArtists = (data?.songs || []).map((song) => {
+    const randomArtist = data?.artistas[Math.floor(Math.random() * data.artistas.length)];
+    return {
+      ...song,
+      artist: randomArtist ? randomArtist.nombre_artistico : 'Unknown Artist',
+    };
+  });
+
+  const filteredSongs = songsWithArtists.filter((song) =>
     `${song.title} ${song.artist}`.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -35,6 +61,9 @@ const CreatePost = ({ onPost }) => {
     setSearch('');
     setSelectedSong(null);
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <form onSubmit={handleSubmit} className="mb-4">
@@ -83,7 +112,7 @@ const CreatePost = ({ onPost }) => {
                     setSearch('');
                   }}
                 >
-                  {song.title} – {song.artist}
+                  {song.title} /// {song.artist}
                 </li>
               ))}
             </ul>

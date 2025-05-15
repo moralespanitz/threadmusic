@@ -1,4 +1,4 @@
-const mockUsers = {
+export const mockUsers = {
   'johndoe': {
     id: '1',
     username: 'johndoe',
@@ -222,4 +222,46 @@ const mockUsers = {
   },
 };
 
-export default mockUsers;
+export const mockSongs = [
+  { title: 'Blinding Lights', audioUrl: '/songs/blinding.mp3' },
+  { title: 'Levitating', audioUrl: '/songs/levitating.mp3' },
+  { title: 'As It Was', audioUrl: '/songs/as_it_was.mp3' },
+  { title: 'Good 4 U', audioUrl: '/songs/good_4_u.mp3' },
+  { title: 'Bad Guy', audioUrl: '/songs/bad_guy.mp3' },
+  { title: 'Watermelon Sugar', audioUrl: '/songs/watermelon_sugar.mp3' },
+  { title: 'Save Your Tears', audioUrl: '/songs/save_your_tears.mp3' },
+  { title: 'Peaches', audioUrl: '/songs/peaches.mp3' },
+  { title: 'Montero (Call Me By Your Name)', audioUrl: '/songs/montero.mp3' },
+  { title: 'Stay', audioUrl: '/songs/stay.mp3' },
+  { title: 'Drivers License', audioUrl: '/songs/drivers_license.mp3' },
+  { title: 'Shivers', audioUrl: '/songs/shivers.mp3' },
+  { title: 'Heat Waves', audioUrl: '/songs/heat_waves.mp3' },
+  { title: 'Industry Baby', audioUrl: '/songs/industry_baby.mp3' },
+  { title: 'Don’t Start Now', audioUrl: '/songs/dont_start_now.mp3' },
+  { title: 'Kiss Me More', audioUrl: '/songs/kiss_me_more.mp3' },
+  { title: 'Positions', audioUrl: '/songs/positions.mp3' },
+  { title: 'Circles', audioUrl: '/songs/circles.mp3' },
+  { title: 'Dance Monkey', audioUrl: '/songs/dance_monkey.mp3' },
+  { title: 'Sunflower', audioUrl: '/songs/sunflower.mp3' },
+  { title: 'Goodbyes', audioUrl: '/songs/goodbyes.mp3' },
+  { title: 'Bad Habits', audioUrl: '/songs/bad_habits.mp3' },
+  { title: 'Take My Breath', audioUrl: '/songs/take_my_breath.mp3' },
+  { title: 'Levitating (Remix)', audioUrl: '/songs/levitating_remix.mp3' },
+  { title: 'Heartbreak Anniversary', audioUrl: '/songs/heartbreak_anniversary.mp3' },
+  { title: 'Montero (Call Me By Your Name) [Remix]', audioUrl: '/songs/montero_remix.mp3' },
+  { title: 'Blinding Lights (Remix)', audioUrl: '/songs/blinding_remix.mp3' },
+  { title: 'Stay [Remix]', audioUrl: '/songs/stay_remix.mp3' },
+  { title: 'Don’t Start Now (Remix)', audioUrl: '/songs/dont_start_now_remix.mp3' },
+  { title: 'Peaches (Remix)', audioUrl: '/songs/peaches_remix.mp3' },
+  { title: 'Save Your Tears (Remix)', audioUrl: '/songs/save_your_tears_remix.mp3' },
+  { title: 'Circles (Remix)', audioUrl: '/songs/circles_remix.mp3' },
+  { title: 'Watermelon Sugar (Remix)', audioUrl: '/songs/watermelon_sugar_remix.mp3' },
+  { title: 'Shivers (Remix)', audioUrl: '/songs/shivers_remix.mp3' },
+  { title: 'Industry Baby (Remix)', audioUrl: '/songs/industry_baby_remix.mp3' },
+  { title: 'Heat Waves (Remix)', audioUrl: '/songs/heat_waves_remix.mp3' },
+  { title: 'Drivers License (Remix)', audioUrl: '/songs/drivers_license_remix.mp3' },
+  { title: 'Good 4 U (Remix)', audioUrl: '/songs/good_4_u_remix.mp3' },
+  { title: 'Kiss Me More (Remix)', audioUrl: '/songs/kiss_me_more_remix.mp3' },
+  { title: 'Positions (Remix)', audioUrl: '/songs/positions_remix.mp3' },
+  { title: 'Dance Monkey (Remix)', audioUrl: '/songs/dance_monkey_remix.mp3' },
+];

@@ -3,22 +3,107 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaUser, FaBookmark, FaSearch, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useClerk } from '@clerk/clerk-react';
-import mockUsers from './something';
+import { useQuery, gql } from '@apollo/client';
+import { buildMockUsers2 } from './something2';
+
+const GET_USERS = gql`
+  query {
+    users {
+      id
+      usuario
+      correo
+      contrasena
+    }
+  }
+`;
+
+const GET_CLIENTES = gql`
+  query {
+    clientes {
+      nombre
+      apellido
+    }
+  }
+`;
+
+const GET_POSTS = gql`
+  query {
+    posts {
+      userId
+      content
+      createdAt
+    }
+  }
+`;
+
+const GET_SONGS_AND_ARTISTS = gql`
+  query GetSongsAndArtists {
+    songs {
+      songId
+      title
+      artistId
+      genre
+      release_date
+      createdAt
+      updatedAt
+    }
+    artistas {
+      user { id }
+      nombre_artistico
+    }
+  }
+`;
 
 const Navbar = () => {
   const { signOut } = useClerk();
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mockUsers, setMockUsers] = useState([]);
+
   const searchPanelRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsCollapsed(window.innerWidth < 1000);
-    };
+  // Queries
+  const { data: usersData } = useQuery(GET_USERS);
+  const { data: clientesData } = useQuery(GET_CLIENTES);
+  const { data: postsData } = useQuery(GET_POSTS);
+  const { data: songsArtistsData } = useQuery(GET_SONGS_AND_ARTISTS);
 
+  // Load mock users from GraphQL
+  useEffect(() => {
+    if (
+      usersData?.users &&
+      clientesData?.clientes &&
+      postsData?.posts &&
+      songsArtistsData?.songs &&
+      songsArtistsData?.artistas
+    ) {
+      const songsWithArtists = songsArtistsData.songs.map(song => {
+        const artist = songsArtistsData.artistas.find(a => a.user.id === song.artistId);
+        return {
+          ...song,
+          artist: artist ? artist.nombre_artistico : 'Unknown Artist',
+        };
+      });
+
+      const builtUsers = buildMockUsers2(
+        clientesData.clientes,
+        usersData.users,
+        postsData.posts,
+        songsWithArtists
+      );
+
+      setMockUsers(builtUsers);
+    }
+  }, [usersData, clientesData, postsData, songsArtistsData]);
+
+  const handleResize = () => {
+    setIsCollapsed(window.innerWidth < 1000);
+  };
+
+  useEffect(() => {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -26,7 +111,6 @@ const Navbar = () => {
 
   const sidebarWidth = isSearching ? '80px' : isCollapsed ? '80px' : '220px';
 
-  const startSearch = () => setIsSearching(true);
   const stopSearch = () => {
     setIsSearching(false);
     setSearchQuery('');
@@ -52,8 +136,8 @@ const Navbar = () => {
   const navItemClass = (path) =>
     `text-light d-flex align-items-center justify-content-start px-3 py-2 rounded transition w-200 ${isActive(path) ? 'bg-success text-dark fw-bold' : ''}`;
 
-  const results = Object.values(mockUsers).filter((user) =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredResults = mockUsers.filter((user) =>
+    user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleLogout = async () => {
@@ -95,7 +179,6 @@ const Navbar = () => {
           <div className="d-flex align-items-center overflow-hidden">
             <span style={{ fontSize: '1.5rem' }}>🎵</span>
             <motion.span
-              initial={false}
               animate={{
                 opacity: isCollapsed || isSearching ? 0 : 1,
                 x: isCollapsed || isSearching ? -20 : 0,
@@ -130,7 +213,7 @@ const Navbar = () => {
 
           <div
             className="text-light d-flex align-items-center justify-content-start px-3 py-2 w-200 rounded transition"
-            onClick={startSearch}
+            onClick={() => setIsSearching(true)}
             style={{ cursor: 'pointer' }}
           >
             <FaSearch className="me-2" style={{ color: '#1ED760' }} />
@@ -138,7 +221,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Logout Button */}
+        {/* Logout */}
         <div className="d-flex justify-content-center mt-3">
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -193,7 +276,7 @@ const Navbar = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search users or songs..."
+              placeholder="Search users..."
               className="form-control mb-3"
               style={{
                 backgroundColor: '#2a2a2a',
@@ -202,16 +285,9 @@ const Navbar = () => {
               }}
             />
 
-            <div
-              className="text-light"
-              style={{
-                maxHeight: '80vh',
-                overflowY: 'auto',
-                paddingRight: '5px',
-              }}
-            >
-              {searchQuery && results.length === 0 && <div>No users found.</div>}
-              {results.map((user) => (
+            <div className="text-light" style={{ maxHeight: '80vh', overflowY: 'auto', paddingRight: '5px' }}>
+              {searchQuery && filteredResults.length === 0 && <div>No users found.</div>}
+              {filteredResults.map((user) => (
                 <div
                   key={user.id}
                   className="d-flex align-items-center mb-2 p-2 rounded"
@@ -223,11 +299,11 @@ const Navbar = () => {
                 >
                   <img
                     src={user.avatar}
-                    alt={user.name}
+                    alt={user.displayName}
                     className="rounded-circle me-2"
                     style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                   />
-                  <span>{user.name}</span>
+                  <span>{user.displayName}</span>
                 </div>
               ))}
             </div>
