@@ -4,7 +4,7 @@ import CreatePost from '../components/CreatePost';
 import { useUser } from '@clerk/clerk-react';
 
 import { useQuery, gql } from '@apollo/client';
-import { buildMockUsers2 } from '../components/something2'; // tu función para combinar
+import { buildMockUsers2 } from '../components/something2';
 
 const GET_USERS = gql`
   query {
@@ -75,7 +75,7 @@ const Home = () => {
       postsData &&
       songsArtistsData
     ) {
-      // Armar canciones con artista para pasar a buildMockUsers2
+      // armar canciones con artista
       const songsWithArtists = (songsArtistsData.songs || []).map(song => {
         const artist = songsArtistsData.artistas.find(
           a => a.user.id === song.artistId
@@ -86,7 +86,6 @@ const Home = () => {
         };
       });
 
-      // Construir usuarios con posts completos
       const builtUsers = buildMockUsers2(
         clientesData.clientes,
         usersData.users,
@@ -94,19 +93,17 @@ const Home = () => {
         songsWithArtists
       );
 
-      // Extraer todos los posts de todos los usuarios
       const allPosts = builtUsers.flatMap(u => u.posts);
-
-      // Ordenar posts por fecha (descendente)
       const sortedPosts = allPosts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-      // Tomar los primeros 15
       setPosts(sortedPosts.slice(0, 15));
     }
   }, [loadingUsers, loadingClientes, loadingPosts, loadingSongsArtists, usersData, clientesData, postsData, songsArtistsData]);
 
   const handleNewPost = (newPost) => {
     setPosts([newPost, ...posts]);
+    
+    const stored = JSON.parse(sessionStorage.getItem('userPosts') || '[]');
+    sessionStorage.setItem('userPosts', JSON.stringify([newPost, ...stored]));
   };
 
   const handleComment = (postId, comment) => {
@@ -136,7 +133,6 @@ const Home = () => {
           key={post.id}
           post={post}
           onComment={handleComment}
-          // Pasa otras props si quieres, como onBookmark
         />
       ))}
     </div>

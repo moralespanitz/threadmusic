@@ -42,7 +42,7 @@ export const buildMockUsers2 = (clientes, users, posts, songsWithArtists) => {
     });
 
     if (!matchedUser) {
-      console.warn(`No se encontró usuario para cliente: ${cliente.nombre} ${cliente.apellido}`);
+      // console.warn(`No se encontró usuario para cliente: ${cliente.nombre} ${cliente.apellido}`);
       return;
     }
 

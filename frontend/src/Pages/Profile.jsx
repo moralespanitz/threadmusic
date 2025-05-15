@@ -125,6 +125,7 @@ const Profile = () => {
       if (!storedFollowing) sessionStorage.setItem('following', finalFollowing);
 
       const mock = builtUsers.find((u) => u.username === user.username);
+      const extraPosts = JSON.parse(sessionStorage.getItem('userPosts') || '[]');
 
       setProfileData({
         name: fullName,
@@ -132,7 +133,7 @@ const Profile = () => {
         avatar,
         followers: finalFollowers,
         following: finalFollowing,
-        posts: mock?.posts || [],
+        posts: [...(mock?.posts || []), ...extraPosts].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)),
       });
     }
 

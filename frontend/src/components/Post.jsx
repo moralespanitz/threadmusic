@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Heart, Bookmark, BookmarkCheck, MessageCircle } from 'lucide-react';
+import { useUser } from '@clerk/clerk-react';
 
 const Post = ({ post, onComment, onBookmark, isComment = false }) => {
+  const { user, isLoaded } = useUser();
+  
   const {
     id = 'unknown',
-    user = { username: 'unknown', displayName: 'Unknown User' },
+    user: postUser = { username: user.username, displayName: user.fullName },
     song,
     caption = '',
     timestamp = '',
@@ -23,8 +26,8 @@ const Post = ({ post, onComment, onBookmark, isComment = false }) => {
     const newComment = {
       id: Date.now(),
       user: {
-        username: 'me',
-        displayName: 'My Name',
+        username: user?.username || 'me',
+        displayName: user?.fullName || 'My Name',
       },
       song: null,
       caption: commentText,
@@ -52,7 +55,7 @@ const Post = ({ post, onComment, onBookmark, isComment = false }) => {
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <div>
-            <strong>{user.displayName}</strong> @{user.username}
+            <strong>{postUser.displayName}</strong> @{postUser.username}
           </div>
           <small className="text-muted">{timestamp}</small>
         </div>
@@ -140,7 +143,7 @@ const Post = ({ post, onComment, onBookmark, isComment = false }) => {
                 key={comment.id}
                 post={comment}
                 isComment={true}
-                onComment={() => {}}
+                onComment={onComment}
               />
             ))}
           </div>
