@@ -10,7 +10,7 @@ import Profile from './Pages/Profile';
 import Bookmarks from './Pages/Bookmarks';
 
 import Navbar from './components/Navbar';
-import RightSidebar from './components/RightSidebar';
+// import RightSidebar from './components/RightSidebar';
 
 const PageTransition = ({ children }) => (
   <motion.div
